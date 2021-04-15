@@ -50,7 +50,7 @@ const Maker = styled.div`
 const MBoard = styled.div`
   display: flex;
   flex-direction: column;
-  width: 70%;
+  min-width: 70%;
 `;
 const BoradMenu = styled.ul`
   display: flex;
