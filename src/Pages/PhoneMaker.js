@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { AiOutlineUndo } from "react-icons/ai";
 import { MdUndo, MdRedo } from "react-icons/md";
@@ -14,26 +14,49 @@ import {
   CgAlignBottom,
   CgAlignMiddle,
 } from "react-icons/cg";
-import BoradCanvas from "./BoradCanvas";
+import BoradCanvas from "./BoardCanvas";
 import Options from "./Options";
+
+export const Store = React.createContext();
+
 function PhoneMaker() {
+  const [color, setColor] = useState("FFFFFF");
+  const [txtcolor, setTxtColor] = useState("000000");
+  const [clickedBtnId, setClickedBtnId] = useState(0);
+
+  const fn_setColor = (curColor) => {
+    setColor(curColor);
+    console.log("phonemaker의 color:", curColor);
+  };
+  const fn_setTxtColor = (curColor) => {
+    setTxtColor(curColor);
+    console.log("phonemaker의 Txt color:", curColor);
+  };
+
+  const fnClickButton = (id) => {
+    console.log("*****button:", id);
+    setClickedBtnId(id);
+  };
+
   return (
     <>
       <Maker>
-        <MBoard>
-          <BoradMenu>
-            {canvasMenuItems.map((item) => {
-              return (
-                <li key={item.id}>
-                  <Icon>{item.icon}</Icon>
-                  <IName>{item.text}</IName>
-                </li>
-              );
-            })}
-          </BoradMenu>
-          <BoradCanvas />
-        </MBoard>
-        <Options />
+        <Store.Provider value={[fn_setColor, fn_setTxtColor, fnClickButton]}>
+          <MBoard>
+            <BoradMenu>
+              {canvasMenuItems.map((item) => {
+                return (
+                  <li key={item.id}>
+                    <Icon>{item.icon}</Icon>
+                    <IName>{item.text}</IName>
+                  </li>
+                );
+              })}
+            </BoradMenu>
+            <BoradCanvas selColor={color} seleTxtColor={txtcolor} />
+          </MBoard>
+          <Options clickedBtnId={clickedBtnId} />
+        </Store.Provider>
       </Maker>
     </>
   );

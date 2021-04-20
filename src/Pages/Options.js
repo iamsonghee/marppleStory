@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { CgPacman } from "react-icons/cg";
 import styled from "styled-components";
-function Options() {
-  const [color, setColor] = useState();
+import Pallete from "../Components/Pallete";
+import { Store } from "./PhoneMaker";
+
+function Options(props) {
+  const [color, setColor] = useState({ code: "FFFFFF", name: "새하얀" });
+  const [txtcolor, setTxtColor] = useState({ code: "FFFFFF", name: "시커먼" });
 
   const selectColor = (e) => {
-    setColor(e.target.id);
+    setColor({ code: e.target.id, name: e.target.getAttribute("name") });
   };
-
-  useEffect(() => {
-    console.log(color);
-  }, [color]);
-
+  const selectTxtColor = (e) => {
+    setTxtColor({ code: e.target.id, name: e.target.getAttribute("name") });
+  };
   return (
     <OptionContainer>
       <ProductInfo>
@@ -19,20 +20,41 @@ function Options() {
         <Price>18,900원</Price>
         <BtnSquare>상품변경</BtnSquare>
       </ProductInfo>
-      <ColorOption>
-        <SelColor>
-          <span>색상-</span>
-          <span>화이트</span>
-        </SelColor>
-        <Pallete>
-          {colors.map((item) => {
-            const divStyle = { "background-color": item.color };
-            return (
-              <Color id={item.id} style={divStyle} onClick={selectColor} />
-            );
-          })}
-        </Pallete>
-      </ColorOption>
+
+      {props.clickedBtnId === 1 && (
+        <ColorOption>
+          <SelColor>
+            <span>색상-</span>
+            <span>{color.name}</span>
+          </SelColor>
+          <Pallete selectColor={selectColor} />
+          <Store.Consumer>
+            {(fn_setColor) => fn_setColor[0](color.code)}
+          </Store.Consumer>
+        </ColorOption>
+      )}
+      {props.clickedBtnId === 3 && (
+        <TextOption>
+          <SelColor>
+            <span>서체선택</span>
+            <div className="selectWrap">
+              <select>
+                <option value="Verdana">Verdana</option>
+                <option value="cursive">cursive</option>
+                <option value="Arial">Arial</option>
+              </select>
+            </div>
+          </SelColor>
+          <SelColor>
+            <span>글자색상-</span>
+            <span>{color.name}</span>
+          </SelColor>
+          <Pallete selectColor={selectTxtColor} />
+          <Store.Consumer>
+            {(fn_setColor) => fn_setColor[1](txtcolor.code)}
+          </Store.Consumer>
+        </TextOption>
+      )}
     </OptionContainer>
   );
 }
@@ -79,43 +101,21 @@ const ColorOption = styled.div`
 `;
 
 const SelColor = styled.div`
-  padding: 10px 0px;
-`;
-
-const Pallete = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  padding: 10px 0px;
-`;
-
-const Color = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 12px;
-  margin-bottom: 8px;
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  background-color: tomato;
-  cursor: pointer;
-  box-shadow: ${(props) => props.theme.shadow};
-  transition: all 0.2s ease-in-out;
-  &:hover {
-    transform: scale(1.1);
+  box-sizing: border-box;
+  padding: 8px 0px;
+  width: 100%;
+  .selectWrap {
+    padding: 8px;
+  }
+  select {
+    display: flex;
+    border: 1px solid grey;
+    width: 100%;
+    padding: 8px;
   }
 `;
 
-const colors = [
-  { id: "000000", color: "#000000" },
-  { id: "FFFFFF", color: "#FFFFFF" },
-  { id: "28327b", color: "#28327b" },
-  { id: "135f6e", color: "#135f6e" },
-  { id: "ffcb31", color: "#ffcb31" },
-  { id: "f47920", color: "#f47920" },
-  { id: "ecaccd", color: "#ecaccd" },
-  { id: "f4c3c6", color: "#f4c3c6" },
-  { id: "cc722c", color: "#cc722c" },
-  { id: "224628", color: "#224628" },
-  { id: "da2028", color: "#da2028" },
-];
+const TextOption = styled.div`
+  display: flex;
+  flex-direction: column;
+`;

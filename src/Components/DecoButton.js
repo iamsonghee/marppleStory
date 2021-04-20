@@ -1,22 +1,31 @@
 import React from "react";
 import styled from "styled-components";
+import { Store } from "../Pages/PhoneMaker";
 
 function DecoButton(props) {
   return (
-    <RoundButton>
-      <Icon>{props.iconImg}</Icon>
-      <Name>{props.name}</Name>
-    </RoundButton>
+    <>
+      <Store.Consumer>
+        {(fnClickButton) => (
+          <RoundButton onClick={() => fnClickButton[2](props.id)}>
+            <Icon>{props.iconImg}</Icon>
+            <Name>{props.name}</Name>
+          </RoundButton>
+        )}
+      </Store.Consumer>
+    </>
   );
 }
 
 export default DecoButton;
 
 const RoundButton = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  z-index: 99;
 `;
 const Icon = styled.div`
   display: flex;
