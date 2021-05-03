@@ -1,16 +1,31 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { useDispatch } from "react-redux";
+import { setColor, setTxtColor } from "../store/actions";
 
 function Pallete(props) {
+  const dispatch = useDispatch();
   const [clickedId, setClickedId] = useState("FFFFFF");
+  const [colorName, setColorName] = useState("새하얀");
 
   const handleOnclick = (e, item) => {
-    props.selectColor(e);
+    setColorName(e.target.getAttribute("name"));
+
+    if (props.btnId === 1) {
+      dispatch(setColor(item.id));
+    } else if (props.btnId === 3) {
+      dispatch(setTxtColor(item.id));
+    }
     setClickedId(item.id);
   };
 
   return (
     <PalleteContainer>
+      <SelColor>
+        <span>색상-</span>
+        <span>{colorName}</span>
+      </SelColor>
+
       {colors.map((item) => {
         const divStyle = { backgroundColor: item.color };
         return (
@@ -36,14 +51,19 @@ const PalleteContainer = styled.div`
   padding: 10px 0px;
 `;
 
+const SelColor = styled.div`
+  box-sizing: border-box;
+  padding: 8px 0px;
+  width: 100%;
+`;
 const Color = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   margin-right: 12px;
   margin-bottom: 8px;
-  width: 35px;
-  height: 35px;
+  width: 25px;
+  height: 25px;
   border-radius: 50%;
   background-color: tomato;
   cursor: pointer;

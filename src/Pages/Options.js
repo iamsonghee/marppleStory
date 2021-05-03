@@ -1,18 +1,47 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+
+import { FaBold, FaItalic, FaUnderline, FaStrikethrough } from "react-icons/fa";
+import { setBImage, setFont, setModalWin, setText } from "../store/actions";
+import { useDispatch } from "react-redux";
+
 import Pallete from "../Components/Pallete";
-import { Store } from "./PhoneMaker";
 
 function Options(props) {
-  const [color, setColor] = useState({ code: "FFFFFF", name: "새하얀" });
-  const [txtcolor, setTxtColor] = useState({ code: "FFFFFF", name: "시커먼" });
+  const [fontDeco, setFontDeco] = useState({ id: 0, isClicked: false });
+  const [imgFile, setimgFile] = useState({ file: null, prevURL: null });
 
-  const selectColor = (e) => {
-    setColor({ code: e.target.id, name: e.target.getAttribute("name") });
+  const dispatch = useDispatch();
+
+  const handleChange = (e) => {
+    dispatch(setFont(e.target.value));
   };
-  const selectTxtColor = (e) => {
-    setTxtColor({ code: e.target.id, name: e.target.getAttribute("name") });
+
+  const handleTxtChange = (e) => {
+    dispatch(setText(e.target.value));
   };
+
+  const fnClickFontDeco = (e) => {
+    setFontDeco({ id: parseInt(e.target.id), isClicked: true });
+  };
+
+  const fnClickAddCart = () => {
+    dispatch(setModalWin(true));
+  };
+  const handleFileOnChange = (e) => {
+    e.preventDefault();
+    let reader = new FileReader();
+    let file = e.target.files[0];
+    reader.onloadend = () => {
+      // setimgFile({
+      //   file: file,
+      //   prevURL: reader.result,
+      // });
+      dispatch(setBImage(reader.result));
+    };
+    reader.readAsDataURL(file);
+  };
+
   return (
     <OptionContainer>
       <ProductInfo>
@@ -23,38 +52,61 @@ function Options(props) {
 
       {props.clickedBtnId === 1 && (
         <ColorOption>
-          <SelColor>
-            <span>색상-</span>
-            <span>{color.name}</span>
-          </SelColor>
-          <Pallete selectColor={selectColor} />
-          <Store.Consumer>
-            {(fn_setColor) => fn_setColor[0](color.code)}
-          </Store.Consumer>
+          <Pallete btnId={props.clickedBtnId} />
         </ColorOption>
       )}
+      {props.clickedBtnId === 2 && (
+        <div>
+          <input
+            type="file"
+            accept="image/jpg,impge/png,image/jpeg,image/gif"
+            onChange={handleFileOnChange}
+          ></input>
+        </div>
+      )}
+
       {props.clickedBtnId === 3 && (
         <TextOption>
-          <SelColor>
-            <span>서체선택</span>
-            <div className="selectWrap">
-              <select>
+          <FontStyle>
+            <SelectWrap>
+              <div>서체선택</div>
+              <select onChange={handleChange}>
                 <option value="Verdana">Verdana</option>
                 <option value="cursive">cursive</option>
                 <option value="Arial">Arial</option>
               </select>
-            </div>
-          </SelColor>
-          <SelColor>
-            <span>글자색상-</span>
-            <span>{color.name}</span>
-          </SelColor>
-          <Pallete selectColor={selectTxtColor} />
-          <Store.Consumer>
-            {(fn_setColor) => fn_setColor[1](txtcolor.code)}
-          </Store.Consumer>
+            </SelectWrap>
+            <FontDeco>
+              {fontDecoArr.map((item, idx) => {
+                return (
+                  <div
+                    id={item.id}
+                    key={idx}
+                    onClick={fnClickFontDeco}
+                    className={
+                      (item.id === fontDeco.id) &
+                        (fontDeco.isClicked === true) && "on"
+                    }
+                  >
+                    {item.icon}
+                  </div>
+                );
+              })}
+            </FontDeco>
+          </FontStyle>
+          <TextInput>
+            <input
+              type="text"
+              placeholder="입력하세요 (12글자 내)"
+              onChange={handleTxtChange}
+              maxLength="12"
+            />
+            <input type="number" name="userPhoneNumber" min="0" />
+          </TextInput>
+          <Pallete btnId={props.clickedBtnId} />
         </TextOption>
       )}
+      <OrderButton onClick={fnClickAddCart}>장바구니 담기</OrderButton>
     </OptionContainer>
   );
 }
@@ -63,7 +115,9 @@ export default Options;
 
 const OptionContainer = styled.div`
   display: flex;
+  position: relative;
   flex-direction: column;
+  align-items: center;
   width: 30%;
   padding: 40px;
 `;
@@ -100,12 +154,35 @@ const ColorOption = styled.div`
   flex-direction: column;
 `;
 
-const SelColor = styled.div`
-  box-sizing: border-box;
-  padding: 8px 0px;
-  width: 100%;
-  .selectWrap {
-    padding: 8px;
+const TextOption = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+const FontStyle = styled.div``;
+const FontDeco = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid grey;
+  width: 140px;
+  margin: 8px 0px;
+  padding: 0px 10px;
+  div {
+    &.on {
+      color: #f3c3c6;
+    }
+    padding: 10px;
+    cursor: pointer;
+    :hover {
+      svg {
+        color: #f3c3c6;
+      }
+    }
+  }
+`;
+const SelectWrap = styled.div`
+  div {
+    padding: 10px 0px;
   }
   select {
     display: flex;
@@ -115,7 +192,36 @@ const SelColor = styled.div`
   }
 `;
 
-const TextOption = styled.div`
-  display: flex;
-  flex-direction: column;
+const TextInput = styled.div`
+  padding: 10px 0px;
+  input {
+    display: flex;
+    width: 100%;
+    padding: 10px 5px;
+    border: 1px solid black;
+  }
 `;
+
+const OrderButton = styled.div`
+  position: absolute;
+  bottom: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  width: 100%;
+  padding: 15px;
+  background-color: black;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  color: white;
+  cursor: pointer;
+`;
+
+const fontDecoArr = [
+  { id: 1, icon: <FaBold />, value: "bold" },
+  { id: 2, icon: <FaItalic />, value: "italic" },
+  { id: 3, icon: <FaUnderline />, value: "underline" },
+  { id: 4, icon: <FaStrikethrough />, value: "throungline" },
+];

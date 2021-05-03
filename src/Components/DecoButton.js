@@ -1,18 +1,19 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
-import { Store } from "../Pages/PhoneMaker";
+import { setButton } from "../store/actions";
 
 function DecoButton(props) {
+  const dispatch = useDispatch();
+  const handleOnclick = (id) => {
+    dispatch(setButton(id));
+  };
   return (
     <>
-      <Store.Consumer>
-        {(fnClickButton) => (
-          <RoundButton onClick={() => fnClickButton[2](props.id)}>
-            <Icon>{props.iconImg}</Icon>
-            <Name>{props.name}</Name>
-          </RoundButton>
-        )}
-      </Store.Consumer>
+      <RoundButton onClick={() => handleOnclick(props.id)}>
+        <Icon>{props.iconImg}</Icon>
+        <Name>{props.name}</Name>
+      </RoundButton>
     </>
   );
 }
@@ -25,8 +26,8 @@ const RoundButton = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: 99;
 `;
+
 const Icon = styled.div`
   display: flex;
   justify-content: center;
@@ -50,6 +51,7 @@ const Icon = styled.div`
     }
   }
 `;
+
 const Name = styled.div`
   margin: 10px 0px 20px 0px;
   font-size: 13px;

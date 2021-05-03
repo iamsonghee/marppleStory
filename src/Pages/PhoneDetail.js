@@ -1,19 +1,20 @@
 import React from "react";
 import styled from "styled-components";
+import ImgSilider from "../Components/ImgSilider";
 
 function PhoneDetail() {
   return (
     <>
-      <Detail></Detail>
+      <Detail>
+        <ImgSilider />
+      </Detail>
     </>
   );
 }
 
 export default PhoneDetail;
 
-const Detail = styled.article`
+const Detail = styled.div`
   display: flex;
   width: 100%;
-  height: 1000px;
-  background-color: teal;
 `;

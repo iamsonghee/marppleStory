@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { AiOutlineUndo } from "react-icons/ai";
 import { MdUndo, MdRedo } from "react-icons/md";
@@ -16,47 +16,37 @@ import {
 } from "react-icons/cg";
 import BoradCanvas from "./BoardCanvas";
 import Options from "./Options";
-
-export const Store = React.createContext();
+import { useSelector } from "react-redux";
 
 function PhoneMaker() {
-  const [color, setColor] = useState("FFFFFF");
-  const [txtcolor, setTxtColor] = useState("000000");
-  const [clickedBtnId, setClickedBtnId] = useState(0);
+  const colorFromStore = useSelector((store) => store.colorReducer);
+  const FontFromStore = useSelector((store) => store.fontReducer);
+  const btnFromStore = useSelector((store) => store.btnReducer);
 
-  const fn_setColor = (curColor) => {
-    setColor(curColor);
-    console.log("phonemaker의 color:", curColor);
-  };
-  const fn_setTxtColor = (curColor) => {
-    setTxtColor(curColor);
-    console.log("phonemaker의 Txt color:", curColor);
-  };
-
-  const fnClickButton = (id) => {
-    console.log("*****button:", id);
-    setClickedBtnId(id);
-  };
+  const color = colorFromStore[0].color;
+  const txtColor = FontFromStore.txtColor;
 
   return (
     <>
       <Maker>
-        <Store.Provider value={[fn_setColor, fn_setTxtColor, fnClickButton]}>
-          <MBoard>
-            <BoradMenu>
-              {canvasMenuItems.map((item) => {
-                return (
-                  <li key={item.id}>
-                    <Icon>{item.icon}</Icon>
-                    <IName>{item.text}</IName>
-                  </li>
-                );
-              })}
-            </BoradMenu>
-            <BoradCanvas selColor={color} seleTxtColor={txtcolor} />
-          </MBoard>
-          <Options clickedBtnId={clickedBtnId} />
-        </Store.Provider>
+        <MBoard>
+          <BoradMenu>
+            {canvasMenuItems.map((item) => {
+              return (
+                <li key={item.id}>
+                  <Icon>{item.icon}</Icon>
+                  <IName>{item.text}</IName>
+                </li>
+              );
+            })}
+          </BoradMenu>
+          <BoradCanvas
+            selColor={color}
+            seleTxtColor={txtColor}
+            clickedBtnId={btnFromStore}
+          />
+        </MBoard>
+        <Options clickedBtnId={btnFromStore} />
       </Maker>
     </>
   );
