@@ -2,14 +2,22 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 
 import { FaBold, FaItalic, FaUnderline, FaStrikethrough } from "react-icons/fa";
-import { setBImage, setFont, setModalWin, setText } from "../store/actions";
-import { useDispatch } from "react-redux";
+import {
+  setBImage,
+  setFont,
+  setModalWin,
+  setText,
+  setFontSize,
+} from "../store/actions";
+import { useDispatch, useSelector } from "react-redux";
 
 import Pallete from "../Components/Pallete";
 
 function Options(props) {
   const [fontDeco, setFontDeco] = useState({ id: 0, isClicked: false });
-  const [imgFile, setimgFile] = useState({ file: null, prevURL: null });
+  // const [imgFile, setimgFile] = useState({ file: null, prevURL: null });
+
+  const fontStore = useSelector((store) => store.fontReducer);
 
   const dispatch = useDispatch();
 
@@ -32,16 +40,15 @@ function Options(props) {
     e.preventDefault();
     let reader = new FileReader();
     let file = e.target.files[0];
+    reader.readAsDataURL(file);
     reader.onloadend = () => {
-      // setimgFile({
-      //   file: file,
-      //   prevURL: reader.result,
-      // });
       dispatch(setBImage(reader.result));
     };
-    reader.readAsDataURL(file);
   };
 
+  const handleFontSizeChange = (e) => {
+    dispatch(setFontSize(e.target.value));
+  };
   return (
     <OptionContainer>
       <ProductInfo>
@@ -69,7 +76,7 @@ function Options(props) {
         <TextOption>
           <FontStyle>
             <SelectWrap>
-              <div>서체선택</div>
+              <div className="label">서체선택</div>
               <select onChange={handleChange}>
                 <option value="Verdana">Verdana</option>
                 <option value="cursive">cursive</option>
@@ -95,13 +102,26 @@ function Options(props) {
             </FontDeco>
           </FontStyle>
           <TextInput>
-            <input
-              type="text"
-              placeholder="입력하세요 (12글자 내)"
-              onChange={handleTxtChange}
-              maxLength="12"
-            />
-            <input type="number" name="userPhoneNumber" min="0" />
+            <div>
+              <div className="label">텍스트</div>
+              <input
+                type="text"
+                placeholder="입력하세요 (12글자 내)"
+                onChange={handleTxtChange}
+                maxLength="12"
+                value={fontStore.text}
+              />
+            </div>
+            <TextSize>
+              <div className="label">글자크기</div>
+              <input
+                type="number"
+                name="userPhoneNumber"
+                min="0"
+                value={fontStore.size}
+                onChange={handleFontSizeChange}
+              />
+            </TextSize>
           </TextInput>
           <Pallete btnId={props.clickedBtnId} />
         </TextOption>
@@ -120,6 +140,9 @@ const OptionContainer = styled.div`
   align-items: center;
   width: 30%;
   padding: 40px;
+  .label {
+    padding: 10px 0px 5px 0px;
+  }
 `;
 
 const ProductInfo = styled.div`
@@ -181,9 +204,6 @@ const FontDeco = styled.div`
   }
 `;
 const SelectWrap = styled.div`
-  div {
-    padding: 10px 0px;
-  }
   select {
     display: flex;
     border: 1px solid grey;
@@ -201,10 +221,17 @@ const TextInput = styled.div`
     border: 1px solid black;
   }
 `;
+const TextSize = styled.div`
+  width: 60px;
+  input {
+    padding: 10px 5px;
+    text-align: right;
+  }
+`;
 
 const OrderButton = styled.div`
   position: absolute;
-  bottom: 50px;
+  bottom: 20px;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -27,6 +27,13 @@ const fontReducer = (state = initialState, action) => {
         size: state.size,
         txtColor: action.color,
       };
+    case "SET_FONT_SIZE":
+      return {
+        font: state.font,
+        text: state.text,
+        size: action.size,
+        txtColor: state.color,
+      };
 
     default:
       return state;

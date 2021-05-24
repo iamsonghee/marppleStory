@@ -25,7 +25,10 @@ function PhoneMaker() {
 
   const color = colorFromStore[0].color;
   const txtColor = FontFromStore.txtColor;
-
+  const [btnId, setBtnId] = useState(null);
+  const fnClickLayout = (btnId) => {
+    setBtnId(btnId);
+  };
   return (
     <>
       <Maker>
@@ -33,7 +36,7 @@ function PhoneMaker() {
           <BoradMenu>
             {canvasMenuItems.map((item) => {
               return (
-                <li key={item.id}>
+                <li key={item.id} onClick={() => fnClickLayout(item.id)}>
                   <Icon>{item.icon}</Icon>
                   <IName>{item.text}</IName>
                 </li>
@@ -44,6 +47,7 @@ function PhoneMaker() {
             selColor={color}
             seleTxtColor={txtColor}
             clickedBtnId={btnFromStore}
+            topButton={btnId}
           />
         </MBoard>
         <Options clickedBtnId={btnFromStore} />

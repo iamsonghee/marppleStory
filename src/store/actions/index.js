@@ -33,6 +33,13 @@ export const setText = (text) => {
   };
 };
 
+export const setFontSize = (size) => {
+  return {
+    type: "SET_FONT_SIZE",
+    size: size,
+  };
+};
+
 export const setModalWin = (isOpen) => {
   return {
     type: "SET_MODAL_WIN",
