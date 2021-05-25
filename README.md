@@ -50,5 +50,6 @@
 
 - HTML,CSS
 - JavaScript(ES6+)
-- React
+- React (함수형 Hooks 활용)
 - styled-Component
+- Redux
